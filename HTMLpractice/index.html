@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style> <!--ทำกรอบให้table  borderเส้นขอบ ขนาด สี  collapseทำให้เส้นรวมกัน-->
+        table, th, td {
+            border: 3px solid pink;   
+            border-collapse: collapse;  
+            }
+           
+        ul {
+            list-style-type:square  ; 
+        }
+        <!--disc-ธรรมดา circle-มีรู square-สีเหลี่ยม none-ไม่มี-->
+        div{
+            background-color: rgb(0, 255, 85);
+        }
+
+        a{
+            background-color: pink;
+        }
+
+        .box{
+            background-color: black;
+            color: aliceblue;
+            margin: 10px ; 
+            padding: 30px; 
+        }
+        <!--marin จนช่องความห่าง,padding ขนาดกรอบ-->
+
+        .center{
+            text-align: center;
+        }
+
+        #myid{
+            width: 500px;
+            height: 300px;
+            background-color: aquamarine;
+        }
+
+        .box1{
+             margin: 5px;
+            width: 300px;
+            height: 150px;
+            background-color: rgb(1, 105, 70);
+        }
+
+        body {
+            width: 500px;
+            margin: 0 auto;
+            background-color: blanchedalmond;
+        }
+
+        header{
+            height: 50px;
+            background-color: rgb(240, 84, 118);
+        }
+
+        nav{
+            height: 30px;
+            background-color: palevioletred;
+        }
+
+        section{
+            float: left;
+            width: 180px;
+            height: 100px;
+            background-color: rgb(125, 29, 220);
+        }
+
+        aside{
+            float: left;
+            width: 320px;
+            height: 100px;
+            background-color: peru;
+        }
+
+        footer{
+            clear: both;
+            height: 50px;
+            background-color: aquamarine;
+
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>my bird</h1> 
+    <div>
+        Lorem ipsum 
+        <br>dolor sit amet. <!--br เว้นบรรทัด-->
+    </div>
+
+    <b>let try</b> <!--ตัวหนา ใช้ strong ก็ได้-->
+    <br>
+    <i>ainisthaa</i><!--ตัวเอียง em ก็ได้-->
+    <br>
+    <mark>hi-fight</mark> <!--ไฮไลต์-->
+    <br>
+    <small>smallll</small> <!--ตัวเล็ก-->
+    <br>
+    <del>delete</del> <!---ขีดฆ่า-->
+    <br>
+    <sub> Text </sub> <!--ห้อยล่าง-->
+    <b>Text</b>
+    <sup> Text </sup><!--ห้อยบน-->
+    <br>
+    <a title="gogoletgo" href="https://chatgpt.com/c/6822ba5b-e204-8008-9281-b4cda4c1f210" target="_blank">GPT check</a> <!--ไปตามลิ้งได้-->
+    <br>
+   <a href="https://www.youtube.com/watch?v=7MeQxBqchNU&list=PLodOpKHs_HIj_vgENP9rMLtwY4Izl_hji"target = "_blank"><!--ทำให้รูปภาพไปหาลิ้งได้-->
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1QnZ8QRvPjSupzJoFNbEXoHUZPBpHIfn0Sg&s" alt="candy bird"> <!--ใส่รูปภาพ-->
+   </a>
+   <img src="img/forpus.jpeg" alt="candy bird"> <!--ใส่รูปภาพ-->
+
+   <br>
+   <table> 
+
+    <tr> <!--กำหนดแถว table row-->
+        <th> <!--table header-->
+            Hello
+        </th>
+        <th>forpus</th>
+    </tr>
+
+    <tr>
+        <td>World</td>
+        <td>
+            Forpus is a genus of neotropical parrots in the family Psittacidae. It is the only genus in the Forpini tribe of the subfamily Arinae.
+        </td>
+    </tr>
+
+    <tr>
+        <td>bird</td>
+        <td>
+            i like bird.
+        </td>
+    </tr>
+
+
+
+   </table>
+
+   <ul> <!--เป็นหมุดลงมา-->
+        <li>List item 1</li> 
+        <li>List item 1</li>
+   </ul>
+
+   <ol> <!--เป็นเลขลำดับลงมา-->
+        <li>ไดรูท</li>
+        <li>พาสเทล</li>
+        <li>ฟอลโล่</li>
+   </ol>
+
+   <form>
+        <fieldset> <!--กรอบของform-->
+            <legend> <!--ทำให้ข้อความขึ้นไปอยู่ด้านบน-->
+                Rrgister form
+            </legend>
+
+            <label for="forpus name">Forpus name</label> <!--textหน้ากล่อง-->
+            <input type="text"  placeholder="input"> <!--textในกล่อง-->
+            <label for="age">Age</label>
+            <input type="text"  placeholder="input">
+            <br>
+            <label for="gender">Select Gender: </label>
+            <br>
+            <input type="radio" name="gender" value="female" value="male" checked> Male <!--ทางเลือก-->
+            <input type="radio" name="gender" value="female" value="male" > Female
+            <br>
+            <input type="checkbox" value="value1" name="value1"> Checkbox 1 <!--ปุ่มติ้ก-->
+            <input type="checkbox" value="value2" name="value2"> Checkbox 2
+            <input type="checkbox" value="value3" name="value3"> Checkbox 3
+            <br>
+             <input type="submit" value="Submit"> <!--ปุ่มsubmit-->
+
+        </fieldset>
+   </form>
+
+
+   <div> <!--block element-->
+        This is block elements
+   </div>
+   <div>
+        This is block elements
+    </div>
+
+    <!--inline element-->
+    <a href="#">this is inline elements</a>
+    <a href="#">this is inline elements</a>
+    <a href="#">this is inline elements</a>
+
+    <div class="box"> <!--การทำclass-->
+        <h2>This is a box1</h2>
+        <p>Lorem ipsum dolor sit.</p>
+    </div>
+    <div class="box center"> <!--เอามาไว้ตรงกลาง -->
+        <h2>This is a box2</h2>
+        <p>Lorem ipsum dolor sit.</p>
+    </div>
+    <div class="box">
+        <h2>This is a box3</h2>
+        <p>Lorem ipsum dolor sit.</p>
+    </div>
+    <p class="box center">Lorem ipsum dolor sit amet consectetur. </p> <!--ใช้กับเนื้อหาได้ด้วย-->
+
+    <div id="myid"></div> <!--ทำกล่อง-->
+    <div class="box1"></div> <!--id ใช้ครั้งเดียว , class ใช้หลายครั้ง-->
+    <div class="box1"></div>
+    <div class="box1"></div>
+    <div class="box1"></div>
+
+    <iframe src="iframe.html" width="640" height="360" frameborder="2"></iframe> <!--ใส่ข้อมูลลงไปได้-->
+    <br>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/xEKlhTV2HYI?si=-CGChY794IdmC0er" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    
+    <p>This is how to use html Entity : example &lt; p &gt;</p> <!--เพื่อความปลอดภัย-->
+
+    <header> 
+    Header
+    </header>
+
+    <nav>
+    Nav
+    </nav>
+
+    <section>
+    Section
+    </section>
+
+    <aside>
+    Aside
+    </aside>
+
+    <footer>
+    Footer
+    </footer>
+
+</body>
+</html>
