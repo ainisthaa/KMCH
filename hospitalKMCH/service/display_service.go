@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"unicode/utf8"
 
-	"lineoa-miniapp/domain"
 	"lineoa-miniapp/dto"
 	"lineoa-miniapp/repository"
 )
@@ -13,12 +13,17 @@ type DisplayService interface {
 }
 
 type displayService struct {
-	roomRepo  repository.RoomRepository
-	queueRepo repository.QueueRepository
+	roomRepo    repository.RoomRepository
+	queueRepo   repository.QueueRepository
+	patientRepo repository.PatientRepository
 }
 
-func NewDisplayService(roomRepo repository.RoomRepository, queueRepo repository.QueueRepository) DisplayService {
-	return &displayService{roomRepo: roomRepo, queueRepo: queueRepo}
+func NewDisplayService(
+	roomRepo repository.RoomRepository,
+	queueRepo repository.QueueRepository,
+	patientRepo repository.PatientRepository,
+) DisplayService {
+	return &displayService{roomRepo: roomRepo, queueRepo: queueRepo, patientRepo: patientRepo}
 }
 
 func (s *displayService) GetDisplay(ctx context.Context) (*dto.DisplayResponse, error) {
@@ -35,8 +40,12 @@ func (s *displayService) GetDisplay(ctx context.Context) (*dto.DisplayResponse, 
 		}
 		patients := make([]dto.DisplayPatient, 0, len(entries))
 		for _, e := range entries {
-			info := getPatientInfo(ctx, e, s)
-			patients = append(patients, info)
+			dp := dto.DisplayPatient{FirstName: e.LineID, MaskedLastName: ""}
+			if info, err := s.patientRepo.FindByLineID(ctx, e.LineID); err == nil && info != nil {
+				dp.FirstName = info.FirstName
+				dp.MaskedLastName = maskLastName(info.LastName)
+			}
+			patients = append(patients, dp)
 		}
 		roomDisplays = append(roomDisplays, dto.RoomDisplay{
 			RoomID:   room.RoomID,
@@ -48,13 +57,11 @@ func (s *displayService) GetDisplay(ctx context.Context) (*dto.DisplayResponse, 
 	return &dto.DisplayResponse{Rooms: roomDisplays}, nil
 }
 
-// getPatientInfo fetches patient name for display — masked last name.
-func getPatientInfo(_ context.Context, e domain.PatientQueue, _ *displayService) dto.DisplayPatient {
-	// LineID is available; in production inject patientRepo to fetch name.
-	// For now return anonymised line_id slice.
-	masked := e.LineID
-	if len(masked) > 6 {
-		masked = masked[:6] + "..."
+// maskLastName shows only the first character of the last name for the public display board.
+func maskLastName(name string) string {
+	if name == "" {
+		return ""
 	}
-	return dto.DisplayPatient{FirstName: masked, MaskedLastName: ""}
+	_, size := utf8.DecodeRuneInString(name)
+	return name[:size] + "."
 }

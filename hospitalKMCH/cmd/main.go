@@ -60,7 +60,7 @@ func main() {
 	registerSvc := service.NewRegisterService(patientRepo, registrationRepo, mhCache)
 	routeSvc := service.NewRouteService(db, patientRepo, mhCache)
 	queueSvc := service.NewQueueService(db, patientRepo, queueRepo, roomRepo)
-	displaySvc := service.NewDisplayService(roomRepo, queueRepo)
+	displaySvc := service.NewDisplayService(roomRepo, queueRepo, patientRepo)
 	staffSvc := service.NewStaffService(roomRepo, queueRepo)
 
 	// ── Startup room fill ─────────────────────────────────────────────────────

@@ -20,6 +20,8 @@ func RegisterRoutes(
 	server.Use(middleware.Recovery())
 	server.Use(middleware.CORS())
 
+	server.GET("/health", handler.HealthCheck())
+
 	api := server.Group("/api/v1")
 	{
 		api.GET("/health", handler.HealthCheck())
