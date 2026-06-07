@@ -15,12 +15,17 @@ type StaffService interface {
 }
 
 type staffService struct {
-	roomRepo  repository.RoomRepository
-	queueRepo repository.QueueRepository
+	roomRepo    repository.RoomRepository
+	queueRepo   repository.QueueRepository
+	patientRepo repository.PatientRepository
 }
 
-func NewStaffService(roomRepo repository.RoomRepository, queueRepo repository.QueueRepository) StaffService {
-	return &staffService{roomRepo: roomRepo, queueRepo: queueRepo}
+func NewStaffService(
+	roomRepo repository.RoomRepository,
+	queueRepo repository.QueueRepository,
+	patientRepo repository.PatientRepository,
+) StaffService {
+	return &staffService{roomRepo: roomRepo, queueRepo: queueRepo, patientRepo: patientRepo}
 }
 
 func (s *staffService) GetDashboard(ctx context.Context) (*dto.StaffDashboardResponse, error) {
@@ -41,11 +46,12 @@ func (s *staffService) GetDashboard(ctx context.Context) (*dto.StaffDashboardRes
 
 		patients := make([]dto.DisplayPatient, 0, len(active))
 		for _, e := range active {
-			masked := e.LineID
-			if len(masked) > 6 {
-				masked = masked[:6] + "..."
+			dp := dto.DisplayPatient{}
+			if info, err := s.patientRepo.FindByLineID(ctx, e.LineID); err == nil && info != nil {
+				dp.FirstName = info.FirstName
+				dp.MaskedLastName = maskLastName(info.LastName)
 			}
-			patients = append(patients, dto.DisplayPatient{FirstName: masked})
+			patients = append(patients, dp)
 		}
 
 		roomStatuses = append(roomStatuses, dto.StaffRoomStatus{
@@ -73,10 +79,15 @@ func (s *staffService) GetWaitingQueue(ctx context.Context) ([]dto.StaffQueueIte
 	}
 	items := make([]dto.StaffQueueItem, 0, len(entries))
 	for _, e := range entries {
-		items = append(items, dto.StaffQueueItem{
+		item := dto.StaffQueueItem{
 			QueueID: e.QueueID,
 			Status:  e.Status,
-		})
+		}
+		if info, err := s.patientRepo.FindByLineID(ctx, e.LineID); err == nil && info != nil {
+			item.FirstName = info.FirstName
+			item.MaskedLastName = maskLastName(info.LastName)
+		}
+		items = append(items, item)
 	}
 	return items, nil
 }
