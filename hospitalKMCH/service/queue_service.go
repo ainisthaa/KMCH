@@ -54,12 +54,6 @@ func (s *queueService) ScanDoctorQueue(ctx context.Context, lineID string, event
 		return fmt.Errorf("payment has not been completed yet")
 	}
 
-	steps := buildSteps(pc)
-	if missing := firstMissingPrerequisite(steps, domain.StationDoctorConsultation); missing != "" {
-		applog.StationPrerequisiteNotMet(lineID, eventID, domain.StationDoctorConsultation, missing)
-		return fmt.Errorf("please complete the '%s' station first", missing)
-	}
-
 	existing, err := s.queueRepo.FindActiveByLineAndEvent(ctx, lineID, eventID)
 	if err != nil {
 		return err
