@@ -1,0 +1,46 @@
+services:
+  app:
+    build: .
+    container_name: lineoa_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_NAME: lineoa-miniapp
+      APP_PORT: 8080
+      SERVICE_DB_HOST: mysql
+      SERVICE_DB_PORT: 3306
+      SERVICE_DB_USER: appuser
+      SERVICE_DB_PASS: password
+      SERVICE_DB_NAME: lineoa_miniapp
+      EXCEL_FILE_PATH: /data/registrations_export_20260529_165557.xlsx
+      MENTAL_HEALTH_EXCEL_PATH: /data/เลขบัตรประชาชน ปี 1_69 สุขภาพจิต.xlsx
+    volumes:
+      - ./data:/data
+      - app_logs:/logs
+
+  mysql:
+    image: mysql:8
+    container_name: lineoa_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lineoa_miniapp
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - lineoa_mysql_data:/var/lib/mysql
+      - ./migration:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  lineoa_mysql_data:
+  app_logs:

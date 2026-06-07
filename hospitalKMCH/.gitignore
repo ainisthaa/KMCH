@@ -1,0 +1,17 @@
+# Sensitive data — never commit
+data/
+
+# Environment variables (passwords, secrets)
+.env
+.env.*
+!.env.example
+
+# Compiled binaries
+lineoa-miniapp
+seed
+
+# Logs
+logs/
+
+# Go vendor (use go mod download instead)
+vendor/
