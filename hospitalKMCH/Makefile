@@ -18,6 +18,8 @@ help:
 	@echo "  make db-delete LINE_ID=dev-...      Delete one patient by line_id"
 	@echo "  make db-mark-psyeval LINE_ID=...    Set psyeval_form=1 (simulate completed mental form)"
 	@echo "  make db-mark-sv LINE_ID=...         Set is_sv=1 (simulate Severe flag)"
+	@echo "  make db-mark-paid LINE_ID=...       Set is_paid=1 (skip the payment QR scan)"
+	@echo "  make db-join-queue LINE_ID=...      Mark paid + insert a waiting queue row (skip QR scan)"
 	@echo ""
 	@echo "App targets:"
 	@echo "  make up                             docker compose up -d"
@@ -64,6 +66,21 @@ db-mark-sv:
 	@test -n "$(LINE_ID)" || (echo "usage: make db-mark-sv LINE_ID=..." && exit 1)
 	$(MYSQL) -e "USE $(MYSQL_DB); UPDATE patient_check SET is_sv=1 WHERE line_id='$(LINE_ID)';"
 	@echo "is_sv=1 for $(LINE_ID)."
+
+db-mark-paid:
+	@test -n "$(LINE_ID)" || (echo "usage: make db-mark-paid LINE_ID=..." && exit 1)
+	$(MYSQL) -e "USE $(MYSQL_DB); UPDATE patient_check SET is_paid=1 WHERE line_id='$(LINE_ID)';"
+	@echo "is_paid=1 for $(LINE_ID)."
+
+# Force a registered+paid patient into the doctor-consultation queue without
+# needing to scan QR codes from the phone. Useful for testing the Queue page.
+db-join-queue:
+	@test -n "$(LINE_ID)" || (echo "usage: make db-join-queue LINE_ID=..." && exit 1)
+	$(MYSQL) -e "USE $(MYSQL_DB); \
+	  UPDATE patient_check SET is_paid=1 WHERE line_id='$(LINE_ID)'; \
+	  INSERT INTO patient_queue (line_id, event_id, queue, status, station, q_starttime, created_at, updated_at) \
+	    VALUES ('$(LINE_ID)', 1, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), 'waiting', 'queue', NOW(), NOW(), NOW());"
+	@echo "$(LINE_ID) added to queue (status=waiting). Auto-fill will assign a room if free."
 
 up:
 	docker compose up -d
