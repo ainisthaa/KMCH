@@ -34,6 +34,7 @@ func RegisterRoutes(
 		{
 			p.POST("/scan-after-payment",           handler.ScanAfterPayment(routeSvc))
 			p.GET("/route",                         handler.GetRoute(routeSvc))
+			p.GET("/check",                         handler.GetCheckStatus(routeSvc))
 			p.POST("/scan-doctor-queue",            handler.ScanDoctorQueue(queueSvc))
 			p.GET("/queue-status",                  handler.GetQueueStatus(queueSvc))
 			p.POST("/complete-doctor-consultation", handler.CompleteDoctorConsultation(queueSvc))

@@ -15,8 +15,8 @@ services:
       SERVICE_DB_USER: appuser
       SERVICE_DB_PASS: password
       SERVICE_DB_NAME: lineoa_miniapp
-      EXCEL_FILE_PATH: /data/registrations_export_20260529_165557.xlsx
-      MENTAL_HEALTH_EXCEL_PATH: /data/เลขบัตรประชาชน ปี 1_69 สุขภาพจิต.xlsx
+      EXCEL_FILE_PATH: /data/registrations_export.xlsx
+      MENTAL_HEALTH_EXCEL_PATH: /data/ข้อมูลคัดกรองสุขภาพจิต.xlsx
     volumes:
       - ./data:/data
       - app_logs:/logs

@@ -16,6 +16,7 @@ import (
 type RouteService interface {
 	ScanAfterPayment(ctx context.Context, lineID string, req dto.ScanAfterPaymentRequest) (*dto.RouteResponse, error)
 	GetRoute(ctx context.Context, lineID string, eventID uint) (*dto.RouteResponse, error)
+	GetCheckStatus(ctx context.Context, lineID string, eventID uint) (*dto.CheckStatusResponse, error)
 	CompletePsychologist(ctx context.Context, lineID string, eventID uint) (*dto.StationCompleteResponse, error)
 	CompleteRightsTransfer(ctx context.Context, lineID string, eventID uint) (*dto.StationCompleteResponse, error)
 }
@@ -139,6 +140,23 @@ func (s *routeService) GetRoute(ctx context.Context, lineID string, eventID uint
 		return nil, fmt.Errorf("payment has not been completed yet")
 	}
 	return buildRouteResponse("", pc), nil
+}
+
+func (s *routeService) GetCheckStatus(ctx context.Context, lineID string, eventID uint) (*dto.CheckStatusResponse, error) {
+	pc, err := s.patientRepo.FindCheckByLineAndEvent(ctx, lineID, eventID)
+	if err != nil {
+		return nil, err
+	}
+	if pc == nil {
+		return nil, fmt.Errorf("patient not registered for this event")
+	}
+	return &dto.CheckStatusResponse{
+		LineID:      pc.LineID,
+		EventID:     pc.EventID,
+		PsyevalForm: pc.PsyevalForm,
+		IsSV:        pc.IsSV,
+		IsPaid:      pc.IsPaid,
+	}, nil
 }
 
 // ── CompletePsychologist / CompleteRightsTransfer ─────────────────────────────

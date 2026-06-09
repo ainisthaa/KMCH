@@ -27,6 +27,14 @@ type CompleteStationRequest struct {
 	EventID uint `json:"event_id" binding:"required"`
 }
 
+type CheckStatusResponse struct {
+	LineID      string `json:"line_id"`
+	EventID     uint   `json:"event_id"`
+	PsyevalForm bool   `json:"psyeval_form"`
+	IsSV        bool   `json:"is_sv"`
+	IsPaid      bool   `json:"is_paid"`
+}
+
 type StationCompleteResponse struct {
 	Message        string       `json:"message"`
 	CurrentStation string       `json:"current_station"`

@@ -43,6 +43,23 @@ func GetRoute(svc service.RouteService) gin.HandlerFunc {
 	}
 }
 
+func GetCheckStatus(svc service.RouteService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		lineID := c.Param("line_id")
+		eventID, _ := strconv.ParseUint(c.Query("event_id"), 10, 64)
+		if eventID == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": true, "message": "event_id query param required"})
+			return
+		}
+		resp, err := svc.GetCheckStatus(c.Request.Context(), lineID, uint(eventID))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": true, "message": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, resp)
+	}
+}
+
 func CompletePsychologist(svc service.RouteService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		lineID := c.Param("line_id")

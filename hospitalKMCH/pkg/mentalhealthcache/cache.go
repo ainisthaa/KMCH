@@ -73,7 +73,9 @@ func (c *Cache) loadFromExcel(filePath string) error {
 	if len(sheets) == 0 {
 		return fmt.Errorf("no sheets found")
 	}
-	rows, err := f.GetRows(sheets[0])
+	// RawCellValue avoids excelize formatting large numeric IDs into truncated
+	// scientific notation, which would lose precision before NormalizeID runs.
+	rows, err := f.GetRows(sheets[0], excelize.Options{RawCellValue: true})
 	if err != nil {
 		return err
 	}

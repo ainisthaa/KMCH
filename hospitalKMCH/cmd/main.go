@@ -10,7 +10,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"lineoa-miniapp/conf"
+	"lineoa-miniapp/domain"
 	"lineoa-miniapp/internal/dbconn"
 	applog "lineoa-miniapp/pkg/logger"
 	"lineoa-miniapp/pkg/mentalhealthcache"
@@ -41,6 +44,13 @@ func main() {
 	)
 	if dbErr != nil {
 		applog.Log.Warn().Err(dbErr).Str("action", "db_connect").Msg("database unavailable at startup")
+	} else {
+		if err := autoMigrate(db); err != nil {
+			applog.UnhandledError("auto_migrate", err)
+		}
+		if err := seedDefaults(db); err != nil {
+			applog.UnhandledError("seed_defaults", err)
+		}
 	}
 
 	issuePath := config.MENTAL_HEALTH_ISSUE_PATH
@@ -96,4 +106,42 @@ func main() {
 		applog.UnhandledError("server_shutdown", err)
 	}
 	applog.Log.Info().Str("action", "stopped").Msg("server stopped")
+}
+
+func autoMigrate(db *gorm.DB) error {
+	applog.Log.Info().Str("action", "auto_migrate").Msg("running gorm auto-migrate")
+	return db.AutoMigrate(
+		&domain.EventInfo{},
+		&domain.PatientInfo{},
+		&domain.DoctorRoom{},
+		&domain.PatientCheck{},
+		&domain.PatientQueue{},
+	)
+}
+
+// seedDefaults makes sure the minimum data the API needs is present: the
+// default event row (id=1) and the five doctor rooms. Idempotent.
+func seedDefaults(db *gorm.DB) error {
+	now := time.Now()
+	event := domain.EventInfo{
+		EventID:       1,
+		EventName:     "Default Event",
+		EventDateFrom: now,
+		EventDateTo:   now.Add(24 * time.Hour),
+	}
+	if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&event).Error; err != nil {
+		return err
+	}
+
+	rooms := []domain.DoctorRoom{
+		{RoomID: "room-001", RoomName: "Room 1"},
+		{RoomID: "room-002", RoomName: "Room 2"},
+		{RoomID: "room-003", RoomName: "Room 3"},
+		{RoomID: "room-004", RoomName: "Room 4"},
+		{RoomID: "room-005", RoomName: "Room 5"},
+	}
+	if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&rooms).Error; err != nil {
+		return err
+	}
+	return nil
 }

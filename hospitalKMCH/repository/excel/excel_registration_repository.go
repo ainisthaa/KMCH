@@ -35,7 +35,7 @@ func (r *ExcelRegistrationRepository) Exists(_ context.Context, id string) (bool
 	if len(sheets) == 0 {
 		return false, fmt.Errorf("registration excel has no sheets")
 	}
-	rows, err := f.GetRows(sheets[0])
+	rows, err := f.GetRows(sheets[0], excelize.Options{RawCellValue: true})
 	if err != nil {
 		return false, err
 	}
